@@ -30,6 +30,7 @@ echo "      Producer running (PID: $PRODUCER_PID). Logs: logs/producer.log"
 
 # 2. Start Spark Job (Background)
 echo "[2/3] Starting Spark Streaming Job..."
+export PYTHONUNBUFFERED=1
 spark-submit \
     --packages org.apache.spark:spark-sql-kafka-0-10_2.12:3.5.0 \
     src/processing/stream_processor.py > logs/spark.log 2>&1 &

@@ -24,16 +24,21 @@ TOPIC_MAP = {
 }
 
 def create_producer():
-    try:
-        producer = KafkaProducer(
-            bootstrap_servers=KAFKA_BROKER,
-            value_serializer=lambda v: json.dumps(v).encode('utf-8')
-        )
-        print(f"Connected to Kafka at {KAFKA_BROKER}")
-        return producer
-    except Exception as e:
-        print(f"Failed to connect to Kafka: {e}")
-        return None
+    max_retries = 10
+    for attempt in range(max_retries):
+        try:
+            producer = KafkaProducer(
+                bootstrap_servers=KAFKA_BROKER,
+                value_serializer=lambda v: json.dumps(v).encode('utf-8')
+            )
+            print(f"Connected to Kafka at {KAFKA_BROKER}")
+            return producer
+        except Exception as e:
+            print(f"Connection attempt {attempt+1}/{max_retries} failed: {e}")
+            time.sleep(5)
+    
+    print("Failed to connect to Kafka after all retries.")
+    return None
 
 def stream_csv_to_kafka(producer, file_name, topic):
     file_path = os.path.join(DATA_DIR, file_name)

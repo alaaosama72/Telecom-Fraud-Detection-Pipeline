@@ -102,7 +102,7 @@ python src/processing/init_clickhouse.py
 
 ### 2. Start the Speed Layer (in WSL)
 ```bash
-bash run_spark.sh
+bash ./scripts/run_spark.sh
 ```
 
 This starts:
@@ -168,10 +168,45 @@ ClickHouse handles both real-time alerts and batch aggregations:
 
 ---
 
+## Production Dashboard Suite Completed ✅
+
+### 4 Dashboards Deployed (20 Panels Total)
+
+**Dashboard 1: Real-time Operations** ([fraud-detection](http://localhost:3000/d/fraud-detection))
+- Time series alerts, live feed, top users, fraud distribution
+
+**Dashboard 2: Business Metrics** ([fraud-business](http://localhost:3000/d/fraud-business))
+- $ Blocked (24h), success rate, fraud value trends, top fraudsters
+
+**Dashboard 3: Operational Health** ([fraud-ops-health](http://localhost:3000/d/fraud-ops-health))
+- Data freshness, processing rate, SLA latency (P50/P95/P99), system activity
+
+**Dashboard 4: Analytics & Insights** ([fraud-analytics](http://localhost:3000/d/fraud-analytics))
+- Fraud heatmap (hour × day), destination analysis, pattern breakdown, 7-day analytics
+
+### Key Production Features
+- Real-time monitoring (5-30s refresh)
+- Financial impact tracking
+- System health SLA monitoring  
+- Advanced fraud pattern analytics
+- All dashboards use Speed Layer (ClickHouse)
+
+**Production Dashboard in Action:**
+![Analytics Dashboard with Real Data](file:///C:/Users/moham/.gemini/antigravity/brain/86c72e0a-25fe-4016-9ec2-b37dc3470e82/uploaded_image_1764801978311.png)
+
+*Screenshot shows Dashboard 4 (Analytics & Insights) successfully displaying fraud heatmap with 162,648 alerts and fraud pattern breakdown showing IRSF and Wangiri as dominant fraud types.*
+
+**Full Documentation:** 
+- [Production Dashboards Overview](file:///d:/ITI-Data_Engineer/Projects/Telecom-Fraud-Detection-Pipeline/docs/PRODUCTION_DASHBOARDS_COMPLETE.md)
+- [Detailed Dashboard User Guide](file:///d:/ITI-Data_Engineer/Projects/Telecom-Fraud-Detection-Pipeline/docs/DASHBOARD_USER_GUIDE.md)
+
+---
+
 ## Next Steps
 
 ### Immediate
-- [ ] Configure Grafana dashboards to visualize `fraud_alerts`
+- [x] Configure Grafana dashboards (4 production dashboards deployed!)
+- [ ] Set up Grafana alerting rules
 - [ ] Add email/SMS alerting to [action_consumer.py](file:///d:/ITI-Data_Engineer/Projects/Telecom-Fraud-Detection-Pipeline/src/processing/action_consumer.py)
 
 ### Future Enhancements

@@ -22,7 +22,7 @@ Start-Sleep -Seconds 30
 python src/source/init_kafka.py
 
 # Initialize ClickHouse tables
-python src/processing/init_clickhouse.py
+python src/source/init_clickhouse.py
 ```
 
 **Verify containers are running:**
@@ -95,19 +95,6 @@ Waiting for fraud alerts...
 
 **In Action Consumer Terminal:**
 - Live blocking messages appear as fraud is detected
-
-**In Spark Terminal (WSL):**
-- Batch processing logs show data flow
-
----
-
-## Stopping the System
-
-**Stop Spark (in WSL terminal):**
-Press `Ctrl+C`
-
-**Stop Action Consumer (in PowerShell):**
-Press `Ctrl+C`
 
 **Stop Infrastructure (in PowerShell):**
 ```powershell

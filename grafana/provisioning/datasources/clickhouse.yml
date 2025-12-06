@@ -8,7 +8,11 @@ datasources:
     isDefault: true
     jsonData:
       defaultDatabase: telecom_fraud
+      server: clickhouse
+      port: 8123
+      protocol: http
       username: admin
+      tlsSkipVerify: false
     secureJsonData:
       password: admin123
     editable: true
