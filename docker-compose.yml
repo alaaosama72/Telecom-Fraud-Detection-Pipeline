@@ -1,7 +1,7 @@
 services:
-  # ---------------------------
-  # Kafka Cluster (KRaft Mode)
-  # ---------------------------
+  # ========================================
+  # KAFKA CLUSTER (3 Brokers - KRaft Mode)
+  # ========================================
   kafka-1:
     image: confluentinc/cp-kafka:7.4.0
     hostname: kafka-1
@@ -77,9 +77,60 @@ services:
       KAFKA_LOG_DIRS: '/var/lib/kafka/data'
       CLUSTER_ID: 'MkU3OEVBNTcwNTJENDM2Qk'
 
-  # ---------------------------
-  # ClickHouse (Serving Layer)
-  # ---------------------------
+  # ========================================
+  # POSTGRESQL (CDC Source Database)
+  # ========================================
+  postgres:
+    image: postgres:14
+    container_name: postgres-telecom
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: admin123
+      POSTGRES_DB: telecom
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init-scripts/postgres:/docker-entrypoint-initdb.d
+    command:
+      - postgres
+      - -c
+      - wal_level=logical
+      - -c
+      - max_replication_slots=10
+      - -c
+      - max_wal_senders=10
+
+  # ========================================
+  # DEBEZIUM CONNECT (CDC Connector)
+  # ========================================
+  debezium:
+    image: debezium/connect:2.5
+    container_name: debezium-connect
+    ports:
+      - "8083:8083"
+    environment:
+      BOOTSTRAP_SERVERS: kafka-1:29092,kafka-2:29092,kafka-3:29092
+      GROUP_ID: debezium-cluster
+      CONFIG_STORAGE_TOPIC: debezium_configs
+      OFFSET_STORAGE_TOPIC: debezium_offsets
+      STATUS_STORAGE_TOPIC: debezium_status
+      CONFIG_STORAGE_REPLICATION_FACTOR: 3
+      OFFSET_STORAGE_REPLICATION_FACTOR: 3
+      STATUS_STORAGE_REPLICATION_FACTOR: 3
+      CONNECT_KEY_CONVERTER: org.apache.kafka.connect.json.JsonConverter
+      CONNECT_VALUE_CONVERTER: org.apache.kafka.connect.json.JsonConverter
+      CONNECT_KEY_CONVERTER_SCHEMAS_ENABLE: "false"
+      CONNECT_VALUE_CONVERTER_SCHEMAS_ENABLE: "false"
+    depends_on:
+      - kafka-1
+      - kafka-2
+      - kafka-3
+      - postgres
+
+  # ========================================
+  # CLICKHOUSE (Analytics/Serving Layer)
+  # ========================================
   clickhouse:
     image: clickhouse/clickhouse-server
     container_name: clickhouse
@@ -98,9 +149,9 @@ services:
         soft: 262144
         hard: 262144
 
-  # ---------------------------
-  # Grafana (Visualization)
-  # ---------------------------
+  # ========================================
+  # GRAFANA (Visualization Dashboard)
+  # ========================================
   grafana:
     image: grafana/grafana:latest
     container_name: grafana
@@ -120,5 +171,6 @@ volumes:
   kafka1_data:
   kafka2_data:
   kafka3_data:
+  postgres_data:
   clickhouse_data:
   grafana_data:
